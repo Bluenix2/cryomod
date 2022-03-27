@@ -1,0 +1,17 @@
+site_name: Cryomod
+site_description: Moderation and anti-raid functionalities at cryogenic temperatures.
+site_author: Bluenix
+
+repo_url: https://github.com/Bluenix2/cryomod
+repo_name: GitHub
+edit_uri: tree/main/docs
+
+docs_dir: 'source'
+
+theme:
+  name: null
+  custom_idr: 'theme/'
+
+nav:
+  - Home:
+    - index.md
