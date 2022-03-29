@@ -6,7 +6,6 @@ from anyio import Path
 from starlette.applications import Starlette
 from triopg import create_pool
 
-
 _log = logging.getLogger(__name__)
 
 

@@ -1,4 +1,9 @@
-from starlette.routing import Router
+from starlette.routing import Route, Router
 
+from .guilds import guilds
 
-v1 = Router()
+v1 = Router(
+    routes=[
+        Route('/guilds/{guild_id:snowflake}', guilds),
+    ],
+)
