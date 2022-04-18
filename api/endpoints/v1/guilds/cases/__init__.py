@@ -19,7 +19,8 @@ class GuildCasesEndpoint(HTTPEndpoint):
         except ValueError:
             raise HTTPException(400, "'limit' has to be an integer")
 
-        conditions = []
+        conditions = ['guild_id = $1']
+
         if 'before' in request.query_params:
             try:
                 before = int(request.query_params['before'])
@@ -36,14 +37,11 @@ class GuildCasesEndpoint(HTTPEndpoint):
 
             conditions.append(f'case_id < {after}')
 
-        if not conditions:
-            raise HTTPException(400, "one query parameter of 'before' and 'after' required")
-
         cases = await request.app.state.db.fetch(
             f"""
             SELECT * FROM CASES
-            WHERE guild_id = $1 AND {' AND '.join(conditions)}
-            LIMIT $2;
+            WHERE {' AND '.join(conditions)}
+            ORDER BY case_id ASC LIMIT $2;
             """,
             guild_id, limit
         )
