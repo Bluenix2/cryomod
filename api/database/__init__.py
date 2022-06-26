@@ -23,15 +23,12 @@ async def migrate(database) -> None:
     await _bootstrap_migrations(database)
 
     last = await database.fetchval('SELECT name FROM migrations ORDER BY name ASC;')
-    if last is None:
-        _log.info('Found no migrations to apply; skipping.')
-        return
 
     folder = Path('./migrations')
     to_do = sorted(
         [
             path async for path in folder.iterdir()
-            if await path.is_file() and path.name > last
+            if await path.is_file() and (path.name > last if last is not None else True)
         ],
         key=lambda path: path.name
     )
@@ -40,7 +37,7 @@ async def migrate(database) -> None:
     # If any migration goes wrong, we should rollback the database completely
     async with database.transaction():
         for path in to_do:
-            await database.execute(path.read_text())
+            await database.execute(await path.read_text())
             await database.execute('INSERT INTO migrations (name) VALUES ($1);', path.name)
             _log.debug(f"Applied migration '{path.name}'")
 
